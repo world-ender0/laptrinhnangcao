@@ -30,15 +30,33 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="C:/Users/z/Downloads/SDL2-devel-2.30.0-mingw/SDL2-2.30.0/x86_64-w64-mingw32/include/SDL2" />
+			<Add directory="D:/SDL/Dev/SDL2/include/SDL2" />
+			<Add directory="D:/SDL/Dev/Image/include/SDL2" />
+			<Add directory="D:/SDL/Dev/TTF/include/SDL2" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDL2main -lSDL2" />
-			<Add directory="C:/Users/z/Downloads/SDL2-devel-2.30.0-mingw/SDL2-2.30.0/x86_64-w64-mingw32/lib" />
+			<Add option="-lSDL2_ttf -lSDL2_image" />
+			<Add directory="D:/SDL/Dev/SDL2/lib" />
+			<Add directory="D:/SDL/Dev/Image/lib" />
+			<Add directory="D:/SDL/Dev/TTF/lib" />
 		</Linker>
-		<Unit filename="eventdriven.cpp" />
-		<Unit filename="game.cpp" />
-		<Unit filename="start.cpp" />
+		<Unit filename="Game.cpp" />
+		<Unit filename="Game.h" />
+		<Unit filename="Menu.cpp" />
+		<Unit filename="TextureManager.cpp" />
+		<Unit filename="TextureManager.h" />
+		<Unit filename="down.bmp" />
+		<Unit filename="game.cbp" />
+		<Unit filename="left.bmp" />
+		<Unit filename="main.cpp" />
+		<Unit filename="menu.h" />
+		<Unit filename="object.cpp" />
+		<Unit filename="object.h" />
+		<Unit filename="press.bmp" />
+		<Unit filename="right.bmp" />
+		<Unit filename="up.bmp" />
+		<Unit filename="x.bmp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
