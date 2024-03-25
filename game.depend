@@ -841,3 +841,41 @@
 1710526151 d:\sdl\game\object.h
 	<SDL.h>
 
+1710525245 source:c:\users\z\documents\github\laptrinhnangcao\game.cpp
+	"Game.h"
+	"Menu.h"
+	"object.h"
+
+1710523622 c:\users\z\documents\github\laptrinhnangcao\game.h
+	<SDL.h>
+	<iostream>
+	"TextureManager.h"
+
+1710523360 c:\users\z\documents\github\laptrinhnangcao\texturemanager.h
+	<SDL.h>
+
+1710526125 c:\users\z\documents\github\laptrinhnangcao\menu.h
+	"object.h"
+	<vector>
+
+1710526151 c:\users\z\documents\github\laptrinhnangcao\object.h
+	<SDL.h>
+
+1711338712 source:c:\users\z\documents\github\laptrinhnangcao\menu.cpp
+	"menu.h"
+	"game.h"
+
+1710526013 source:c:\users\z\documents\github\laptrinhnangcao\object.cpp
+	"object.h"
+	"TextureManager.h"
+	"Game.h"
+
+1710523603 source:c:\users\z\documents\github\laptrinhnangcao\texturemanager.cpp
+	"TextureManager.h"
+	<SDL_image.h>
+	"Game.h"
+
+1711338846 source:c:\users\z\documents\github\laptrinhnangcao\main.cpp
+	"Game.h"
+	"Menu.h"
+

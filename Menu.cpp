@@ -69,6 +69,6 @@ void Menu::close()
 void Menu:: AddTag(const char* path)
 {
     tags.push_back(new Object);
-    //tags.back()->init(path);
-   // tags.back()->SetPos(_x,_y + (tags.size()-1)*(tags.back()->GetDest().h + 10) );
+    tags.back()->init(path);
+    tags.back()->SetPos(_x,_y + (tags.size()-1)*(tags.back()->GetDest().h + 10) );
 }
