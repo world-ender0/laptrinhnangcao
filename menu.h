@@ -17,6 +17,6 @@ public:
     void render();
     void close();
 
-    void AddTag(const char* path);
+    void AddTag(const char* path, const char* text = NULL, int sz = 12);
 
 };
