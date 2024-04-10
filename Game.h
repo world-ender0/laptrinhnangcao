@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include<bits/stdc++.h>
 #include<SDL_image.h>
+#include<SDL_ttf.h>
 
 using namespace std;
 
@@ -12,7 +13,12 @@ public:
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Event e;
+    TTF_Font* font;
+    SDL_Color White ;
     bool running = true;
+
+    int score = 0;
+    int head_rotate = 1;
 
     static const int screen_width = 500;
     static const int screen_height = 500;
