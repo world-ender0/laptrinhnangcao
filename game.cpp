@@ -1,9 +1,11 @@
 #include "Game.h"
 #include "Menu.h"
-#include "object.h"
 
+SDL_Window* Game::window;
+SDL_Renderer* Game::renderer;
+SDL_Event Game::e;
 
-void Game:: init()
+void Game::create()
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "failed" << '\n';
@@ -17,6 +19,14 @@ void Game:: init()
     if (window==nullptr) cout<<"-1";
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     srand(time(0));
+//    ScoreText->init(NULL,"SCORE : ", 25);
+//    ScoreText->SetPos(50,50);
+}
+void Game:: init()
+{
+    Walls.clear();
+    Foods.clear();
+    body.clear();
     for (int i=0; i< grid_width; i++){
         for(int j=0; j< grid_height; j++){
             grid[i][j] = Block::Empty;
@@ -25,8 +35,15 @@ void Game:: init()
     grid[head.x][head.y] = Block::Head;
     TTF_Init();
     font = TTF_OpenFont("fonts/font.ttf", 24);
-    //if(font == nullptr)std::cout<<"false\n";
+    running = true;
+    alive = true;
+    grown = 1;
+    Size = 1;
+    speed = 0.2;
+    score = 0;
     White = {255, 255, 255};
+    newfood();
+    newfood();
     newfood();
     input();
 
@@ -34,28 +51,35 @@ void Game:: init()
 }
 void Game::input()
 {
+    int FPS = 60;
+    int start_frame = 0;
+    int delay_time = 0;
     while(running){
+        start_frame = SDL_GetTicks();
         while(SDL_PollEvent(&e)){
             if(e.type == SDL_QUIT) running = false;
             if(e.type == SDL_KEYDOWN){
                 switch(e.key.keysym.sym){
-                    case SDLK_UP:
+                    case SDLK_w:
                       if(last_dir != Move::down || Size == 1) dir = Move::up;
                       break;
-                    case SDLK_DOWN:
+                    case SDLK_s:
                       if(last_dir != Move::up || Size == 1) dir = Move::down;
                       break;
-                    case SDLK_LEFT:
+                    case SDLK_a:
                       if(last_dir != Move::right || Size == 1) dir = Move::left;
                       break;
-                    case SDLK_RIGHT:
+                    case SDLK_d:
                       if(last_dir != Move::left || Size == 1) dir = Move::right;
                       break;
                 }
             }
         }
+
         update();
         render();
+        delay_time = 1000/FPS - (SDL_GetTicks() - start_frame);
+        if(delay_time > 0)SDL_Delay(delay_time);
     }
 }
 
@@ -116,19 +140,64 @@ void Game::update()
     head.x = new_x;
     head.y = new_y;
 
+{/** an ta'o--------------------------------------------------------------------**/
+
+
     Block &next = grid[head.x][head.y];
     if(next == Block::Food){
-        grown ++;
+        type = buff[head.x][head.y];
+        switch(type)
+        {
+        case 1:
+            {
+                //score += 10;
+                grown ++;
+            }
+            break;
+        case 2:
+            {
+                //score += 5;
+                if(body.size() > 2)
+                {
+                    grid[body.back().x][body.back().y] = Block::Empty;
+                    body.pop_back();
+                }
+            }
+            break;
+        default:
+            break;
+        }
+
+        buff[head.x][head.y] = -1;
         newfood();
+        //if(rand()%5 == 0)
+            newwall();
     }
-    else if(next == Block::Body){
+    else if(next == Block::Body || next == Block::Wall){
         alive = false;
         running = false;
+        SDL_Delay(3000);
         return;
     }
     next = Block::Head;
 }
+   // ScoreText->SetText(("SCORE : "+std::to_string(score)).c_str(),25);
+}
 
+void Game::newwall(){
+    int x, y;
+    while(1){
+        x = rand() % (grid_width);
+        y = rand() % (grid_height);
+        if(y < 5) continue;
+
+        if(grid[x][y] == Block::Empty){
+          grid[x][y] = Block::Wall;
+          Game::Walls.push_back({x,y});
+          break;
+        }
+    }
+}
 
 void Game::newfood(){
     int x, y;
@@ -139,8 +208,9 @@ void Game::newfood(){
 
         if(grid[x][y] == Block::Empty){
           grid[x][y] = Block::Food;
-          food.x = x;
-          food.y = y;
+          if(rand()%100 <= 30)buff[x][y] = 2;
+          else buff[x][y] = 1;
+          Game::Foods.push_back({x,y});
           break;
         }
     }
@@ -178,20 +248,41 @@ void Game::render()
     SDL_Surface* surface = IMG_Load("image/goldenapple.png");
     SDL_Texture* apple = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
-    SDL_Rect block = {food.x*20, food.y*20, 20, 20};
-    SDL_RenderCopy(renderer, apple, NULL, &block);
+
+    surface = IMG_Load("image/redapple.png");
+    SDL_Texture* apple1 = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+    SDL_Rect block;
+    for(auto& f : Game::Foods)
+    {
+        block = {f.x*20, f.y*20, 20, 20};
+        if(buff[f.x][f.y] == 1)SDL_RenderCopy(renderer, apple, NULL, &block);
+        else if(buff[f.x][f.y] == 2)SDL_RenderCopy(renderer, apple1, NULL, &block);
+    }
+
+
+    surface = IMG_Load("image/wall.png");
+    SDL_Texture* wall = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
+    for(auto& w : Game::Walls)
+    {
+        block = {w.x*20, w.y*20, 20, 20};
+        SDL_SetTextureColorMod(wall,200,150,150);
+        SDL_RenderCopy(renderer, wall, NULL, &block);
+    }
 
     SDL_SetRenderDrawColor(renderer, 0, 191, 255, 255);
     block = {head.x*20, head.y*20, 20, 20};
 
-    SDL_Surface* surface1 = IMG_Load("image/body1.jpg");
-    SDL_Surface* surface2 = IMG_Load("image/body2.jpg");
+    SDL_Surface* surface1 = IMG_Load("image/body1.png");
+    SDL_Surface* surface2 = IMG_Load("image/body2.png");
     SDL_Texture* texture1 = SDL_CreateTextureFromSurface(renderer, surface1);
     SDL_Texture* texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
     SDL_FreeSurface(surface1);
     SDL_FreeSurface(surface2);
-    SDL_Surface* surface3 = IMG_Load("image/body3.jpg");
-    SDL_Surface* surface4 = IMG_Load("image/head.jpg");
+    SDL_Surface* surface3 = IMG_Load("image/body3.png");
+    SDL_Surface* surface4 = IMG_Load("image/head.png");
     SDL_Texture* texture3 = SDL_CreateTextureFromSurface(renderer, surface3);
     SDL_Texture* texture4 = SDL_CreateTextureFromSurface(renderer, surface4);
     SDL_FreeSurface(surface3);
@@ -221,14 +312,14 @@ void Game::render()
         {
             suf = body[i+1];
 
-            if( prev.y == body[i].y + 1 && suf.x == body[i].x + 1){Tex = texture2; ang = -90;flip1 = flip2= SDL_FLIP_NONE;}
-            else if( suf.y == body[i].y + 1 && prev.x == body[i].x + 1){Tex = texture2; ang = -90;flip1 = flip2= SDL_FLIP_NONE;}
-            else if( prev.y == body[i].y - 1 && suf.x == body[i].x + 1){Tex = texture2;ang = 180; flip1 = flip2 = SDL_FLIP_NONE;}
-            else if( suf.y == body[i].y - 1 && prev.x == body[i].x + 1){Tex = texture2;ang = 180; flip1 = flip2 = SDL_FLIP_NONE;}
-            else if( prev.y == body[i].y + 1 && suf.x == body[i].x - 1){Tex = texture2;ang = 0; flip1 = flip2 = SDL_FLIP_NONE;}
-            else if( suf.y == body[i].y + 1 && prev.x == body[i].x - 1){Tex = texture2;ang = 0; flip1 = flip2 = SDL_FLIP_NONE;}
-            else if( prev.y == body[i].y - 1 && suf.x == body[i].x - 1){Tex = texture2; ang = 90;flip1 = flip2= SDL_FLIP_NONE;}
-            else if( suf.y == body[i].y - 1 && prev.x == body[i].x - 1){Tex = texture2; ang = 90;flip1 = flip2= SDL_FLIP_NONE;}
+            if( prev.y%grid_height == (body[i].y + 1)%grid_height && suf.x == (body[i].x + 1)%grid_width){Tex = texture2; ang = -90;flip1 = flip2= SDL_FLIP_NONE;}
+            else if( suf.y == (body[i].y + 1)%grid_height && prev.x == (body[i].x + 1)%grid_width){Tex = texture2; ang = -90;flip1 = flip2= SDL_FLIP_NONE;}
+            else if( prev.y == (body[i].y - 1 + grid_height)%grid_height && suf.x == (body[i].x + 1)%grid_width){Tex = texture2;ang = 180; flip1 = flip2 = SDL_FLIP_NONE;}
+            else if( suf.y == (body[i].y - 1 + grid_height)%grid_height && prev.x == (body[i].x + 1)%grid_width){Tex = texture2;ang = 180; flip1 = flip2 = SDL_FLIP_NONE;}
+            else if( prev.y == (body[i].y + 1) %grid_height && suf.x == (body[i].x - 1 +grid_width)%grid_width){Tex = texture2;ang = 0; flip1 = flip2 = SDL_FLIP_NONE;}
+            else if( suf.y == (body[i].y + 1) %grid_height && prev.x == (body[i].x - 1+grid_width)%grid_width){Tex = texture2;ang = 0; flip1 = flip2 = SDL_FLIP_NONE;}
+            else if( prev.y == (body[i].y - 1 + grid_height)%grid_height && suf.x == (body[i].x - 1+grid_width)%grid_width){Tex = texture2; ang = 90;flip1 = flip2= SDL_FLIP_NONE;}
+            else if( suf.y == (body[i].y - 1 + grid_height)%grid_height && prev.x == (body[i].x - 1+grid_width)%grid_width){Tex = texture2; ang = 90;flip1 = flip2= SDL_FLIP_NONE;}
 
         }
         else Tex = texture3;

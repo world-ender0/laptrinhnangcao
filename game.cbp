@@ -46,11 +46,16 @@
 		</Linker>
 		<Unit filename="Game.cpp" />
 		<Unit filename="Game.h" />
+		<Unit filename="Menu.cpp" />
+		<Unit filename="TextureManager.cpp" />
+		<Unit filename="TextureManager.h" />
 		<Unit filename="down.bmp" />
 		<Unit filename="game.cbp" />
 		<Unit filename="left.bmp" />
 		<Unit filename="main.cpp" />
-		<Unit filename="press.bmp" />
+		<Unit filename="menu.h" />
+		<Unit filename="object.cpp" />
+		<Unit filename="object.h" />
 		<Unit filename="right.bmp" />
 		<Unit filename="up.bmp" />
 		<Unit filename="x.bmp" />

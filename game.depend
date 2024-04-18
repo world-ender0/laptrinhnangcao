@@ -841,16 +841,16 @@
 1710526151 d:\sdl\game\object.h
 	<SDL.h>
 
-1712684464 source:c:\users\z\documents\github\laptrinhnangcao\game.cpp
+1713456757 source:c:\users\z\documents\github\laptrinhnangcao\game.cpp
 	"Game.h"
 	"Menu.h"
-	"object.h"
 
-1712684079 c:\users\z\documents\github\laptrinhnangcao\game.h
+1713456611 c:\users\z\documents\github\laptrinhnangcao\game.h
 	<SDL.h>
 	<bits/stdc++.h>
 	<SDL_image.h>
 	<SDL_ttf.h>
+	"object.h"
 
 1711463205 c:\users\z\documents\github\laptrinhnangcao\texturemanager.h
 	<SDL.h>
@@ -863,14 +863,23 @@
 1711463991 c:\users\z\documents\github\laptrinhnangcao\object.h
 	<SDL.h>
 
-1711545737 source:c:\users\z\documents\github\laptrinhnangcao\menu.cpp
+1713456070 source:c:\users\z\documents\github\laptrinhnangcao\menu.cpp
+	"menu.h"
+	"game.h"
 
-1711546047 source:c:\users\z\documents\github\laptrinhnangcao\object.cpp
-
-1711546035 source:c:\users\z\documents\github\laptrinhnangcao\texturemanager.cpp
-
-1711547386 source:c:\users\z\documents\github\laptrinhnangcao\main.cpp
+1713456508 source:c:\users\z\documents\github\laptrinhnangcao\object.cpp
+	"object.h"
+	"TextureManager.h"
 	"Game.h"
+
+1713454934 source:c:\users\z\documents\github\laptrinhnangcao\texturemanager.cpp
+	"TextureManager.h"
+	<SDL_image.h>
+	"Game.h"
+
+1713455620 source:c:\users\z\documents\github\laptrinhnangcao\main.cpp
+	"Game.h"
+	"menu.h"
 
 1710262085 d:\sdl\dev\ttf\include\sdl2\sdl_ttf.h
 	"SDL.h"
