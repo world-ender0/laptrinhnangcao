@@ -15,7 +15,7 @@ SDL_Texture* TextureManager:: LoadImage(const char* path)
 }
 
 
-SDL_Texture* TextureManager:: LoadImage(const char* path, SDL_Rect& src)
+SDL_Texture* TextureManager::LoadImage(const char* path, SDL_Rect& src)
 {
     SDL_Surface* surface = IMG_Load(path);
     src.w = surface->w;

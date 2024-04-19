@@ -11,16 +11,10 @@ void Game::create()
         std::cout << "failed" << '\n';
         return;
     }
-
-    if (!SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl")) {
-        std::cerr << "Warning: Could not set render driver hint!" << std::endl;
-    }
     window = SDL_CreateWindow("SnakeGame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width, screen_height, SDL_WINDOW_SHOWN);
     if (window==nullptr) cout<<"-1";
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     srand(time(0));
-//    ScoreText->init(NULL,"SCORE : ", 25);
-//    ScoreText->SetPos(50,50);
 }
 void Game:: init()
 {
@@ -86,8 +80,6 @@ void Game::input()
 void Game::update()
 {
     if(alive==false) return;
-//    SDL_Delay(1000);
-//    cout << head.x << " " << head.y << '\n';
     switch(dir){
         case Move::up:
           pos.y -= speed;
@@ -102,14 +94,14 @@ void Game::update()
           pos.x += speed;
           break;
     }
-    int new_x = pos.x;
+    int new_x = pos.x;//pos la vi tri kieu so thuc, new la ep ve kieu int
     int new_y = pos.y;
     if(new_x < 0) pos.x = grid_width - 1;
     else if(new_x > grid_width - 1) pos.x = 0;
 
     if(new_y < 0) pos.y = grid_height - 1;
     else if(new_y > grid_height - 1) pos.y = 0;
-    new_x = pos.x;
+    new_x = pos.x;//ép về kiểu nguyên
     new_y = pos.y;
     if(new_x != head.x || new_y != head.y){
         last_dir = dir;
@@ -122,42 +114,45 @@ void Game::update()
         }
         else{
           body.push_front(head);
-          grid[body.back().x][body.back().y] = Block::Empty;
+          grid[body.back().x][body.back().y] = Block::Empty;// duoi hien tai bien thanh emty
+          grid[body.front().x][body.front().y] = Block::Body;//head hien tai bien thanh body
           body.pop_back();
-          for(int i = 0; i < (int)body.size(); ++i){
-            SDL_Point free = body[i];
-            grid[free.x][free.y] = Block::Body;
-            free = body[i];
-          }
+//          for(int i = 0; i < (int)body.size(); ++i){
+//            grid[body[i].x][body[i].y] = Block::Body;
+//          }
+
         }
     }
 
-    if(head.y%grid_height == (new_y - 1)%grid_height)head_rotate = 1;//down
+    if(head.y%grid_height == (new_y - 1+grid_height)%grid_height)head_rotate = 1;//down
     if(head.y%grid_height == (new_y + 1)%grid_height)head_rotate = 4;//up
 
-    if(head.x%grid_width == (new_x - 1)%grid_width)head_rotate = 2;//right
+    if(head.x%grid_width == (new_x - 1+grid_width)%grid_width)head_rotate = 2;//right
     if(head.x%grid_width == (new_x + 1)%grid_width)head_rotate = 3;//left
     head.x = new_x;
-    head.y = new_y;
+    head.y = new_y;//cap nhat head
+    /// nhung khong cap nhat grid = Block::Head
 
 {/** an ta'o--------------------------------------------------------------------**/
 
 
     Block &next = grid[head.x][head.y];
+
+
     if(next == Block::Food){
-        type = buff[head.x][head.y];
+        type = buff[head.x][head.y];// buff luu xem la tao do hay tao vang
         switch(type)
         {
-        case 1:
+        case 1:///neu latao vang
             {
                 //score += 10;
                 grown ++;
             }
             break;
-        case 2:
+        case 2:///neu la tao do
             {
                 //score += 5;
-                if(body.size() > 2)
+                if(body.size() > 2)///neu size > 2 thi ngan di 1
                 {
                     grid[body.back().x][body.back().y] = Block::Empty;
                     body.pop_back();
@@ -168,10 +163,10 @@ void Game::update()
             break;
         }
 
-        buff[head.x][head.y] = -1;
-        newfood();
+        buff[head.x][head.y] = -1;///an xong thi reset buff ve rong
+        newfood();/// tao food moi thay cai da an
         //if(rand()%5 == 0)
-            newwall();
+            newwall();/// tao tuong sau khi an
     }
     else if(next == Block::Body || next == Block::Wall){
         alive = false;
@@ -179,7 +174,7 @@ void Game::update()
         SDL_Delay(3000);
         return;
     }
-    next = Block::Head;
+    next = Block::Head;///cap nhat lai head
 }
    // ScoreText->SetText(("SCORE : "+std::to_string(score)).c_str(),25);
 }
@@ -193,7 +188,7 @@ void Game::newwall(){
 
         if(grid[x][y] == Block::Empty){
           grid[x][y] = Block::Wall;
-          Game::Walls.push_back({x,y});
+          Game::Walls.push_back({x,y});/// cho vao  vector de de kiem soat
           break;
         }
     }
@@ -208,8 +203,8 @@ void Game::newfood(){
 
         if(grid[x][y] == Block::Empty){
           grid[x][y] = Block::Food;
-          if(rand()%100 <= 30)buff[x][y] = 2;
-          else buff[x][y] = 1;
+          if(rand()%100 <= 30)buff[x][y] = 2;/// 30 % ra tao do
+          else buff[x][y] = 1;/// 70% ra tao vang
           Game::Foods.push_back({x,y});
           break;
         }
